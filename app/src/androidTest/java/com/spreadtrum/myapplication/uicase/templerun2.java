@@ -59,6 +59,19 @@ public class templerun2 {
             device.resetWatcherTriggers();
         }
 
+        //自启动提示
+        device.registerWatcher("batterDialog", new UiWatcher() {
+            @Override
+            public boolean checkForCondition() {
+                UiObject2 yes = device.wait(Until.findObject(By.text("确定")), 1000);
+                if (yes != null) {
+                    yes.clickAndWait(Until.newWindow(), 2000);
+                    return true;
+                }
+                return false;
+            }
+        });
+
         device.registerWatcher("web", new UiWatcher() {
             @Override
             public boolean checkForCondition() {

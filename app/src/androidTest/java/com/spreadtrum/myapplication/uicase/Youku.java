@@ -77,6 +77,21 @@ public class Youku {
         if (device.hasWatcherTriggered("Updata")) {
             device.resetWatcherTriggers();
         }
+
+        //自启动提示
+        device.registerWatcher("batterDialog", new UiWatcher() {
+            @Override
+            public boolean checkForCondition() {
+                UiObject2 yes = device.wait(Until.findObject(By.text("确定")), 1000);
+                if (yes != null) {
+                    yes.clickAndWait(Until.newWindow(), 2000);
+                    return true;
+                }
+                return false;
+            }
+        });
+
+
         //有些apk进去之后会有一个弹出框，因此如果有弹出框的话需要先点掉弹出框
 //        UiObject2 simchoose = device.wait(Until.findObject(By.res("android:id/button1")), 1000).getChildren().get(3);
 

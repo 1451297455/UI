@@ -53,6 +53,18 @@ public class Backup {
 
             }
         });
+
+        device.registerWatcher("batterDialog", new UiWatcher() {
+            @Override
+            public boolean checkForCondition() {
+                UiObject2 yes = device.wait(Until.findObject(By.text("确定")), 1000);
+                if (yes != null) {
+                    yes.clickAndWait(Until.newWindow(), 2000);
+                    return true;
+                }
+                return false;
+            }
+        });
         if (device.hasWatcherTriggered("permession")) {
             device.resetWatcherTriggers();
         }

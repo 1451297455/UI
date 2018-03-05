@@ -51,10 +51,22 @@ public class Preset7 {
     public void DefaultSet() throws Exception {
         help.OpenScreen();//唤醒屏幕
         device.pressHome();
+        openWiFi();
         device.executeShellCommand(screen);
         SetLanguage();
         lighton();
         setbugreport();
+    }
+
+    private boolean openWiFi() {
+        try {
+            device.executeShellCommand("svc wifi enable");
+            device.executeShellCommand("svc data disable");
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+
     }
 
     private void lighton() throws IOException, UiObjectNotFoundException {
@@ -93,8 +105,8 @@ public class Preset7 {
         auto = device.wait(Until.findObject(By.text("WLAN")), 2000);
         if (auto.getParent().getChildren().get(1).getText().equals("已关闭")) {
             auto.clickAndWait(Until.newWindow(), 2000);
-            UiObject2 swic=device.wait(Until.findObject(By.res("com.android.settings:id/switch_bar")),2000);
-            swic.clickAndWait(Until.newWindow(),2000);
+            UiObject2 swic = device.wait(Until.findObject(By.res("com.android.settings:id/switch_bar")), 2000);
+            swic.clickAndWait(Until.newWindow(), 2000);
             device.pressBack();
         }
 

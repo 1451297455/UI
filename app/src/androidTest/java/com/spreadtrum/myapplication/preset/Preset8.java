@@ -49,6 +49,7 @@ public class Preset8 {
         screen();//解锁
         setlanguage();//设置语言为中文
         wifiOn();//打开wifi
+        Autolaunch();
         setDisplay();//设置屏幕显示
         localon();//打开gps
         open();//打开安装应用的所有权限
@@ -67,6 +68,32 @@ public class Preset8 {
             device.wakeUp();
         }
         device.swipe(x / 2, y / 5 * 4, x / 2, y / 5, 20);
+    }
+
+    //开机自启动
+    private void Autolaunch() throws IOException, UiObjectNotFoundException, InterruptedException {
+        device.executeShellCommand("am start com.android.settings");
+        UiScrollable scrollable = new UiScrollable(new UiSelector().resourceId("com.android.settings:id/dashboard_container"));
+        scrollable.scrollTextIntoView("电池");
+        UiObject2 batter = device.wait(Until.findObject(By.text("电池")), 2000);
+        if (batter != null) {
+            batter.clickAndWait(Until.newWindow(), 2000);
+        }
+        scrollable=new UiScrollable(new UiSelector().resourceId("com.android.settings:id/list"));
+        scrollable.scrollTextIntoView("自启动管理");
+        UiObject2 autolaunch = device.wait(Until.findObject(By.text("自启动管理")), 2000);
+        autolaunch.clickAndWait(Until.newWindow(), 2000);
+        UiObject2 autolaunch2 = device.wait(Until.findObject(By.text("开机自启动")), 2000);
+        autolaunch2.clickAndWait(Until.newWindow(), 2000);
+        Thread.sleep(5000);
+        UiObject2 allapp = device.wait(Until.findObject(By.text("全部")), 2000);
+        if (allapp != null) {
+            UiObject2 security_toggle_all =device.wait(Until.findObject(By.res("com.android.settings:id/security_toggle_all")),2000);
+            if (security_toggle_all.getText().equals("关闭")) {
+                security_toggle_all.clickAndWait(Until.newWindow(), 2000);
+            }
+        }
+
     }
 
     private void setDisplay() throws IOException, UiObjectNotFoundException, InterruptedException {
@@ -196,42 +223,21 @@ public class Preset8 {
         device.pressHome();
     }
 
-    public boolean wifiOn() throws IOException, InterruptedException {
-        device.executeShellCommand("am start com.android.settings");
-        String build = getProp("ro.build.version.release");
-        if (build.contains("8.0")||build.contains("8.1.0")) {
-            Thread.sleep(2000);
-            UiObject2 net = device.findObject(By.text("网络和互联网"));
-            net.clickAndWait(Until.newWindow(), 1000);
-            UiObject2 switchs = device.wait(Until.findObject(By.res("com.android.settings:id/switchWidget")), 1000);
-            if (switchs.getText().equals("关闭")) {
-                switchs.clickAndWait(Until.newWindow(), 1000);
-                device.pressHome();
-                return true;
-            }
-        } else {
-            UiObject2 wifi = device.wait(Until.findObject(By.text("WLAN")), 1000);
-            String state = wifi.getParent().getChildren().get(1).getText();
-            if (!state.equals("已关闭")) {
-                device.pressHome();
-                return true;
-            } else {
-                wifi.clickAndWait(Until.newWindow(), 1000);
-                UiObject2 switch2 = device.wait(Until.findObject(By.res("com.android.settings:id/switch_widget")), 1000);
-                switch2.clickAndWait(Until.newWindow(), 1000);
-                device.pressHome();
-                return true;
-            }
+    public boolean wifiOn() {
+        try {
+            device.executeShellCommand("svc wifi enable");
+            device.executeShellCommand("svc data disable");
+            return true;
+        } catch (Exception e) {
+            return false;
         }
-        device.pressHome();
-        return true;
     }
 
 
     private void open() throws IOException, UiObjectNotFoundException, InterruptedException {
         device.executeShellCommand("am start com.android.settings");
         String build = getProp("ro.build.version.release");
-        if (build.contains("8.0")||build.contains("8.1.0")) {
+        if (build.contains("8.0") || build.contains("8.1.0")) {
             UiScrollable lis = new UiScrollable(new UiSelector().resourceId("com.android.settings:id/dashboard_container"));
             lis.scrollTextIntoView("应用和通知");
             UiObject2 app = device.wait(Until.findObject(By.text("应用和通知")), 1000);

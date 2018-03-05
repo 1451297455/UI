@@ -47,7 +47,17 @@ public class Aiqiyi {
         int ii = 0;
         //这里是点亮屏幕方法。
         help.OpenScreen();
-
+        device.registerWatcher("batterDialog", new UiWatcher() {
+            @Override
+            public boolean checkForCondition() {
+                UiObject2 yes = device.wait(Until.findObject(By.text("确定")), 1000);
+                if (yes != null) {
+                    yes.clickAndWait(Until.newWindow(), 2000);
+                    return true;
+                }
+                return false;
+            }
+        });
         device.registerWatcher("permession", new UiWatcher() {
             @Override
             public boolean checkForCondition() {
@@ -132,10 +142,10 @@ public class Aiqiyi {
             Thread.sleep(6000);
             //页面滑动
             swipes();
-            device.swipe(x / 6 *5, y / 3 * 2, x / 6, y / 3 * 2, 20);
+            device.swipe(x / 6 * 5, y / 3 * 2, x / 6, y / 3 * 2, 20);
             Thread.sleep(1000);
             swipes();
-            device.swipe(x / 6 *5, y / 3 * 2, x / 6, y / 3 * 2, 20);
+            device.swipe(x / 6 * 5, y / 3 * 2, x / 6, y / 3 * 2, 20);
             Thread.sleep(1000);
             swipes();
             UiObject2 tv = device.wait(Until.findObject(By.text("电视剧")), 1000);
@@ -158,7 +168,7 @@ public class Aiqiyi {
             device.swipe(x / 6 * 5, y / 3 * 2, x / 6, y / 3 * 2, 20);
             Thread.sleep(1000);
             swipes();
-            device.swipe(x / 6 *5, y / 3 * 2, x / 6, y / 3 * 2, 20);
+            device.swipe(x / 6 * 5, y / 3 * 2, x / 6, y / 3 * 2, 20);
             Thread.sleep(1000);
             UiScrollable title = new UiScrollable(new UiSelector().resourceId("com.qiyi.video:id/main_psts"));
             title.setAsHorizontalList();
